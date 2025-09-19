@@ -1,0 +1,19 @@
+services:
+  subscription_service:
+    build: subscription_service
+    container_name: subscription_service
+    restart: unless-stopped
+    depends_on:
+      - serviceName
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /data/postgres
+    
+    volumes:
+       - ./var/postgres:/data/postgres
+    restart: unless-stopped
