@@ -12,7 +12,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-
 // CreateSubscriptionHandler godoc
 // @Summary Создать подписку
 // @Description Создаёт новую подписку пользователю
@@ -24,15 +23,15 @@ import (
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /subscription [post]
-func (h *Handler) CreateSubscriptionHandler(c *gin.Context){
+func (h *Handler) CreateSubscriptionHandler(c *gin.Context) {
 	var request subscriptionservice.CreateSubscription
-	
+
 	reqId, ok := c.Get("req_id")
-	if !ok{
+	if !ok {
 		reqId = "none"
 	}
 	logrus.WithFields(logrus.Fields{
-		"req_id": reqId, 
+		"req_id": reqId,
 		"method": "CreateSubscriptionHandler",
 	}).Debug()
 
@@ -43,14 +42,14 @@ func (h *Handler) CreateSubscriptionHandler(c *gin.Context){
 	}
 	serviceCtx := context.WithValue(c, "req_id", reqId)
 
-	response, err := h.service.CreateSubscriptionService(serviceCtx, request)  
-	if err != nil{
+	response, err := h.service.CreateSubscriptionService(serviceCtx, request)
+	if err != nil {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		c.Set("message", err.Error())
 		return
 	}
 	c.Set("message", fmt.Sprintf("create subscription - %s", response))
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"id": response,
 	})
@@ -66,25 +65,25 @@ func (h *Handler) CreateSubscriptionHandler(c *gin.Context){
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /subscription/{id} [get]
-func (h *Handler) GetSubscriptionHandler(c *gin.Context){
+func (h *Handler) GetSubscriptionHandler(c *gin.Context) {
 	reqId, ok := c.Get("req_id")
-	if !ok{
+	if !ok {
 		reqId = "none"
 	}
 	logrus.WithFields(logrus.Fields{
-		"req_id": reqId, 
+		"req_id": reqId,
 		"method": "GetSubscriptionHandler",
 	}).Debug()
 
 	subId, err := uuid.Parse(c.Param("id"))
-	if err != nil{
+	if err != nil {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		c.Set("message", err.Error())
 		return
 	}
 	serviceCtx := context.WithValue(c, "req_id", reqId)
 	response, err := h.service.GetSubscriptionService(serviceCtx, subId)
-	if err != nil{
+	if err != nil {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		c.Set("message", err.Error())
 		return
@@ -100,20 +99,20 @@ func (h *Handler) GetSubscriptionHandler(c *gin.Context){
 // @Success 200 {object} []subscriptionservice.Subscription
 // @Failure 500 {object} map[string]string
 // @Router /subscription [get]
-func (h *Handler) ListSubscriptionHandler(c *gin.Context){
+func (h *Handler) ListSubscriptionHandler(c *gin.Context) {
 	reqId, ok := c.Get("req_id")
-	if !ok{
+	if !ok {
 		reqId = "none"
 	}
 	logrus.WithFields(logrus.Fields{
-		"req_id": reqId, 
+		"req_id": reqId,
 		"method": "ListSubscriptionHandler",
 	}).Debug()
 
 	serviceCtx := context.WithValue(c, "req_id", reqId)
 
 	response, err := h.service.ListSubscriptionService(serviceCtx)
-	if err != nil{
+	if err != nil {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		c.Set("message", err.Error())
 		return
@@ -123,6 +122,7 @@ func (h *Handler) ListSubscriptionHandler(c *gin.Context){
 	})
 
 }
+
 // DeleteSubscriptionHandler godoc
 // @Summary Удалить подписку
 // @Description Удаляет подписку по ID
@@ -132,25 +132,25 @@ func (h *Handler) ListSubscriptionHandler(c *gin.Context){
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /subscription/{id} [delete]
-func (h *Handler) DeleteSubscriptionHandler(c *gin.Context){
+func (h *Handler) DeleteSubscriptionHandler(c *gin.Context) {
 	reqId, ok := c.Get("req_id")
-	if !ok{
+	if !ok {
 		reqId = "none"
 	}
 	logrus.WithFields(logrus.Fields{
-		"req_id": reqId, 
+		"req_id": reqId,
 		"method": "DeleteSubscriptionHandler",
 	}).Debug()
 
 	subId, err := uuid.Parse(c.Param("id"))
-	if err != nil{
+	if err != nil {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		c.Set("message", err.Error())
 		return
 	}
 	serviceCtx := context.WithValue(c, "req_id", reqId)
 	err = h.service.DeleteSubscriptionService(serviceCtx, subId)
-	if err != nil{
+	if err != nil {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		c.Set("message", err.Error())
 		return
@@ -172,15 +172,15 @@ func (h *Handler) DeleteSubscriptionHandler(c *gin.Context){
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /subscription/{id} [patch]
-func (h *Handler) UpdateSubscriptionHandler(c *gin.Context){
+func (h *Handler) UpdateSubscriptionHandler(c *gin.Context) {
 	var request subscriptionservice.UpdateSubscription
-	
+
 	reqId, ok := c.Get("req_id")
-	if !ok{
+	if !ok {
 		reqId = "none"
 	}
 	logrus.WithFields(logrus.Fields{
-		"req_id": reqId, 
+		"req_id": reqId,
 		"method": "UpdateSubscriptionHandler",
 	}).Debug()
 
@@ -191,7 +191,7 @@ func (h *Handler) UpdateSubscriptionHandler(c *gin.Context){
 	}
 
 	subId, err := uuid.Parse(c.Param("id"))
-	if err != nil{
+	if err != nil {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		c.Set("message", err.Error())
 		return
@@ -200,14 +200,14 @@ func (h *Handler) UpdateSubscriptionHandler(c *gin.Context){
 	request.Id = subId
 	serviceCtx := context.WithValue(c, "req_id", reqId)
 
-	err = h.service.UpdateSubscriptionService(serviceCtx, request)  
-	if err != nil{
+	err = h.service.UpdateSubscriptionService(serviceCtx, request)
+	if err != nil {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		c.Set("message", err.Error())
 		return
 	}
 	c.Set("message", fmt.Sprintf("update subscription - %s", subId))
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"id": subId,
 	})
@@ -225,14 +225,14 @@ func (h *Handler) UpdateSubscriptionHandler(c *gin.Context){
 // @Success 200 {object} map[string]int
 // @Failure 500 {object} map[string]string
 // @Router /subscription/total [get]
-func (h *Handler) TotalPriceHandler(c *gin.Context){
+func (h *Handler) TotalPriceHandler(c *gin.Context) {
 	filters := subscriptionservice.FilterSubscription{}
 	reqId, ok := c.Get("req_id")
-	if !ok{
+	if !ok {
 		reqId = "none"
 	}
 	logrus.WithFields(logrus.Fields{
-		"req_id": reqId, 
+		"req_id": reqId,
 		"method": "TotalPriceHandler",
 	}).Debug()
 
@@ -241,35 +241,35 @@ func (h *Handler) TotalPriceHandler(c *gin.Context){
 	userId := c.Query("user_id")
 	serviceName := c.Query("service_name")
 
-	if dateFrom == ""{
+	if dateFrom == "" {
 		filters.StartDateFrom.SetValid("01-1970")
-	}else{
+	} else {
 		filters.StartDateFrom.SetValid(dateFrom)
 	}
 
 	if dateTo == "" {
 		now := time.Now().Format("01-2006")
 		filters.StartDateTo.SetValid(now)
-	}else {
+	} else {
 		filters.StartDateTo.SetValid(dateTo)
 	}
 
 	if userId != "" {
-    	filters.UserId.SetValid(userId)
+		filters.UserId.SetValid(userId)
 	}
 	if serviceName != "" {
-    	filters.ServiceName.SetValid(serviceName)
+		filters.ServiceName.SetValid(serviceName)
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"req_id": reqId, 
+		"req_id": reqId,
 		"method": "TotalPriceHandler",
-		"data": filters,
+		"data":   filters,
 	}).Debug()
 	serviceCtx := context.WithValue(c, "req_id", reqId)
 
 	total, err := h.service.TotalPriceService(serviceCtx, filters)
-	if err != nil{
+	if err != nil {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		c.Set("message", err.Error())
 		return

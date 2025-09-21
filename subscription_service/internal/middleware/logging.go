@@ -9,7 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func Logging() gin.HandlerFunc{
+func Logging() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		start := time.Now()
@@ -25,45 +25,45 @@ func Logging() gin.HandlerFunc{
 		clientIP := c.ClientIP()
 		method := c.Request.Method
 		statusCode := c.Writer.Status()
-		
+
 		message, ok := c.Get("message")
-		if !ok{
+		if !ok {
 			message = ""
 		}
 		if raw != "" {
 			path = path + "?" + raw
 		}
-		if statusCode >= 100 && statusCode < 400{
+		if statusCode >= 100 && statusCode < 400 {
 			logrus.WithFields(logrus.Fields{
-				"method": method,
-				"path": path,
-				"status": statusCode,
+				"method":     method,
+				"path":       path,
+				"status":     statusCode,
 				"request_id": req_id,
-				"clientIP": clientIP,
-				"start": start.Format(time.DateTime),
-				"latency": latency,
+				"clientIP":   clientIP,
+				"start":      start.Format(time.DateTime),
+				"latency":    latency,
 			}).Info(message.(string))
 
-		}else if statusCode >= 400 && statusCode < 500{
+		} else if statusCode >= 400 && statusCode < 500 {
 			logrus.WithFields(logrus.Fields{
-				"method": method,
-				"path": path,
-				"status": statusCode,
+				"method":     method,
+				"path":       path,
+				"status":     statusCode,
 				"request_id": req_id,
-				"clientIP": clientIP,
-				"start": start.Format(time.DateTime),
-				"latency": latency,
+				"clientIP":   clientIP,
+				"start":      start.Format(time.DateTime),
+				"latency":    latency,
 			}).Warn(message.(string))
-			
-		}else{
+
+		} else {
 			logrus.WithFields(logrus.Fields{
-				"method": method,
-				"path": path,
-				"status": statusCode,
+				"method":     method,
+				"path":       path,
+				"status":     statusCode,
 				"request_id": req_id,
-				"clientIP": clientIP,
-				"start": start.Format(time.DateTime),
-				"latency": latency,
+				"clientIP":   clientIP,
+				"start":      start.Format(time.DateTime),
+				"latency":    latency,
 			}).Error(message.(string))
 		}
 	}

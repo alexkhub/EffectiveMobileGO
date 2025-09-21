@@ -8,9 +8,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
- func LoadLogger(level string) error{
+func LoadLogger(level string) error {
 
-	switch level{
+	switch level {
 	case "DEBUG":
 		logrus.SetLevel(logrus.DebugLevel)
 		logrus.SetFormatter(&logrus.JSONFormatter{
@@ -24,13 +24,13 @@ import (
 			TimestampFormat: time.DateTime,
 		})
 		file, err := os.OpenFile("../logs/subsciption.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-    	if err == nil {
+		if err == nil {
 			mw := io.MultiWriter(os.Stdout, file)
-        	logrus.SetOutput(mw)
+			logrus.SetOutput(mw)
 		}
 		return err
-	
-	default: 
+
+	default:
 		logrus.SetLevel(logrus.InfoLevel)
 		logrus.SetFormatter(&logrus.JSONFormatter{
 			TimestampFormat: time.DateTime,

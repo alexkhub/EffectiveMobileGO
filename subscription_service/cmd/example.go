@@ -12,6 +12,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 )
+
 // @title Subscription API
 // @version 1.0
 // @description API для управления подписками
@@ -19,18 +20,18 @@ import (
 // @BasePath /api
 func main() {
 	cfg, err := config.Load()
-	if err != nil{
+	if err != nil {
 		logrus.Fatal(err)
 	}
-	
-	err = logger.LoadLogger(cfg.DebugLevel) 
-	if err != nil{
+
+	err = logger.LoadLogger(cfg.DebugLevel)
+	if err != nil {
 		logrus.Fatal(err)
 	}
 	logrus.Debug("config load")
-	
+
 	app, err := app.NewApp(cfg)
-	if err != nil{
+	if err != nil {
 		logrus.Error(err)
 	}
 
@@ -43,11 +44,11 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	<-quit
-	
-	 if err := app.Close(); err != nil {
-        logrus.Error(fmt.Sprintf("server didn't start: %v", err))
-    }
 
-    logrus.Info("server stopped gracefully")
+	if err := app.Close(); err != nil {
+		logrus.Error(fmt.Sprintf("server didn't start: %v", err))
+	}
+
+	logrus.Info("server stopped gracefully")
 
 }
