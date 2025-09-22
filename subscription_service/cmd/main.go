@@ -24,7 +24,7 @@ func main() {
 		logrus.Fatal(err)
 	}
 
-	err = logger.LoadLogger(cfg.DebugLevel)
+	err = logger.LoadLogger(cfg.LogLevel, cfg.LogFile)
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -36,7 +36,7 @@ func main() {
 	}
 
 	go func() {
-		if err := app.Handler.InitRouter().Run(fmt.Sprintf(":%d", cfg.Host)); err != nil {
+		if err := app.Handler.InitRouter().Run(fmt.Sprintf(":%d", cfg.Port)); err != nil {
 			logrus.Error(fmt.Sprintf("server didn't start: %v", err))
 		}
 	}()
@@ -46,7 +46,7 @@ func main() {
 	<-quit
 
 	if err := app.Close(); err != nil {
-		logrus.Error(fmt.Sprintf("server didn't start: %v", err))
+		logrus.Error(fmt.Sprintf("server error: %v", err))
 	}
 
 	logrus.Info("server stopped gracefully")

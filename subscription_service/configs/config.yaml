@@ -3,5 +3,6 @@ postgres:
   port: 5432
   sslmode: disable
 
-debug_level: DEBUG 
-app_host: 8080
+log_level: DEBUG 
+log_file: subsciption.log
+server_port: 8080

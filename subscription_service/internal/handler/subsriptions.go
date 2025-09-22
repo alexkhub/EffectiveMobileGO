@@ -14,11 +14,11 @@ import (
 
 // CreateSubscriptionHandler godoc
 // @Summary Создать подписку
-// @Description Создаёт новую подписку пользователю
+// @Description Создает новую подписку
 // @Tags subscriptions
 // @Accept json
 // @Produce json
-// @Param subscription body subscriptionservice.CreateSubscription true "Subscription"
+// @Param subscription body subscriptionservice.CreateSubscription true "Данные подписки"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
@@ -62,6 +62,7 @@ func (h *Handler) CreateSubscriptionHandler(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Subscription ID"
 // @Success 200 {object} subscriptionservice.Subscription
+// @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /subscription/{id} [get]
@@ -77,10 +78,11 @@ func (h *Handler) GetSubscriptionHandler(c *gin.Context) {
 
 	subId, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		newErrorMessage(c, http.StatusInternalServerError, err.Error())
+		newErrorMessage(c, http.StatusBadRequest, err.Error())
 		c.Set("message", err.Error())
 		return
 	}
+
 	serviceCtx := context.WithValue(c, "req_id", reqId)
 	response, err := h.service.GetSubscriptionService(serviceCtx, subId)
 	if err != nil {
@@ -88,12 +90,18 @@ func (h *Handler) GetSubscriptionHandler(c *gin.Context) {
 		c.Set("message", err.Error())
 		return
 	}
+	if response.Id == uuid.Nil {
+		newErrorMessage(c, http.StatusNotFound, fmt.Sprintf("%s not found", subId))
+		c.Set("message", fmt.Sprintf("%s not found", subId))
+		return
+
+	}
 	c.JSON(http.StatusOK, response)
 }
 
 // ListSubscriptionHandler godoc
 // @Summary Список подписок
-// @Description Возвращает все подписки
+// @Description Возвращает список всех подписок
 // @Tags subscriptions
 // @Produce json
 // @Success 200 {object} []subscriptionservice.Subscription
@@ -128,8 +136,8 @@ func (h *Handler) ListSubscriptionHandler(c *gin.Context) {
 // @Description Удаляет подписку по ID
 // @Tags subscriptions
 // @Param id path string true "Subscription ID"
-// @Success 204 "No Content"
-// @Failure 404 {object} map[string]string
+// @Success 204
+// @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /subscription/{id} [delete]
 func (h *Handler) DeleteSubscriptionHandler(c *gin.Context) {
@@ -144,7 +152,7 @@ func (h *Handler) DeleteSubscriptionHandler(c *gin.Context) {
 
 	subId, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		newErrorMessage(c, http.StatusInternalServerError, err.Error())
+		newErrorMessage(c, http.StatusBadRequest, err.Error())
 		c.Set("message", err.Error())
 		return
 	}
@@ -156,20 +164,19 @@ func (h *Handler) DeleteSubscriptionHandler(c *gin.Context) {
 		return
 	}
 	c.Set("message", fmt.Sprintf("subsription delete - %s", subId))
-	c.JSON(http.StatusNoContent, nil)
+	c.Status(http.StatusNoContent)
 }
 
 // UpdateSubscriptionHandler godoc
 // @Summary Обновить подписку
-// @Description Обновляет существующую подписку по ID
+// @Description Обновляет существующую подписку
 // @Tags subscriptions
 // @Accept json
 // @Produce json
 // @Param id path string true "Subscription ID"
-// @Param subscription body subscriptionservice.UpdateSubscription true "Данные для обновления"
+// @Param subscription body subscriptionservice.UpdateSubscription true "Обновленные данные подписки"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /subscription/{id} [patch]
 func (h *Handler) UpdateSubscriptionHandler(c *gin.Context) {
@@ -214,15 +221,16 @@ func (h *Handler) UpdateSubscriptionHandler(c *gin.Context) {
 }
 
 // TotalPriceHandler godoc
-// @Summary Общая сумма подписок
-// @Description Считает сумму всех подписок за период с фильтрами
+// @Summary Общая стоимость подписок
+// @Description Считает суммарную стоимость подписок с фильтрами
 // @Tags subscriptions
 // @Produce json
-// @Param date_from query string false "Начало периода (MM-YYYY)"
-// @Param date_to query string false "Конец периода (MM-YYYY)"
+// @Param date_from query string false "Дата начала (01-2006)"
+// @Param date_to query string false "Дата конца (01-2006)"
 // @Param user_id query string false "UUID пользователя"
 // @Param service_name query string false "Название сервиса"
 // @Success 200 {object} map[string]int
+// @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /subscription/total [get]
 func (h *Handler) TotalPriceHandler(c *gin.Context) {

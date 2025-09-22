@@ -5,14 +5,14 @@ COPY  go.mod go.sum ./
 RUN go mod download
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /example cmd/example.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o /main cmd/main.go
 
 FROM alpine:latest
 COPY configs/config.yaml ./configs/config.yaml
 COPY migrations ./migrations
 COPY docs /app/docs
-COPY --from=builder example /bin/example
-ENTRYPOINT ["/bin/example"]
+COPY --from=builder main /bin/main
+ENTRYPOINT ["/bin/main"]
 EXPOSE 8080
 
 CMD ["./example"]

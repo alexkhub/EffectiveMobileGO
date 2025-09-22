@@ -14,20 +14,20 @@ import (
 	"gopkg.in/guregu/null.v3"
 )
 
-type SubsriptionRepository struct {
+type SubscriptionRepository struct {
 	db *sqlx.DB
 }
 
-func NewSubsriptionRepository(db *sqlx.DB) *SubsriptionRepository {
-	return &SubsriptionRepository{
+func NewSubscriptionRepository(db *sqlx.DB) *SubscriptionRepository {
+	return &SubscriptionRepository{
 		db: db,
 	}
 }
 
-func (r *SubsriptionRepository) CreateSubscriptionRepository(ctx context.Context, request subscriptionservice.CreateSubscription) (uuid.UUID, error) {
+func (r *SubscriptionRepository) CreateSubscriptionRepository(ctx context.Context, request subscriptionservice.CreateSubscription) (uuid.UUID, error) {
 	var id uuid.UUID
 
-	query := "INSERT INTO subsription (service_name, price, user_id, start_date) VALUES ($1, $2, $3, $4) RETURNING id;"
+	query := "INSERT INTO subscription (service_name, price, user_id, start_date) VALUES ($1, $2, $3, $4) RETURNING id;"
 
 	startDate, err := time.Parse("01-2006", request.StartDate)
 	if err != nil {
@@ -41,9 +41,9 @@ func (r *SubsriptionRepository) CreateSubscriptionRepository(ctx context.Context
 	return id, nil
 }
 
-func (r *SubsriptionRepository) GetSubscriptionRepository(ctx context.Context, subId uuid.UUID) (subscriptionservice.PreparationSubscription, error) {
+func (r *SubscriptionRepository) GetSubscriptionRepository(ctx context.Context, subId uuid.UUID) (subscriptionservice.PreparationSubscription, error) {
 	var response subscriptionservice.PreparationSubscription
-	query := "SELECT id, service_name, price, user_id, start_date FROM subsription WHERE id = $1;"
+	query := "SELECT id, service_name, price, user_id, start_date FROM subscription WHERE id = $1;"
 
 	if err := r.db.GetContext(ctx, &response, query, subId); err != nil {
 		if err == sql.ErrNoRows {
@@ -55,9 +55,9 @@ func (r *SubsriptionRepository) GetSubscriptionRepository(ctx context.Context, s
 
 }
 
-func (r *SubsriptionRepository) ListSubscriptionRepository(ctx context.Context) ([]subscriptionservice.PreparationSubscription, error) {
+func (r *SubscriptionRepository) ListSubscriptionRepository(ctx context.Context) ([]subscriptionservice.PreparationSubscription, error) {
 	var response []subscriptionservice.PreparationSubscription
-	query := "SELECT id, service_name, price, user_id, start_date FROM subsription;"
+	query := "SELECT id, service_name, price, user_id, start_date FROM subscription;"
 
 	if err := r.db.SelectContext(ctx, &response, query); err != nil {
 		return nil, err
@@ -66,14 +66,14 @@ func (r *SubsriptionRepository) ListSubscriptionRepository(ctx context.Context) 
 
 }
 
-func (r *SubsriptionRepository) DeleteSubscriptionRepository(ctx context.Context, subId uuid.UUID) error {
-	query := "DELETE FROM subsription WHERE id = $1;"
+func (r *SubscriptionRepository) DeleteSubscriptionRepository(ctx context.Context, subId uuid.UUID) error {
+	query := "DELETE FROM subscription WHERE id = $1;"
 	_, err := r.db.ExecContext(ctx, query, subId)
 	return err
 
 }
 
-func (r *SubsriptionRepository) UpdateSubscriptionRepository(ctx context.Context, request subscriptionservice.UpdateSubscription) error {
+func (r *SubscriptionRepository) UpdateSubscriptionRepository(ctx context.Context, request subscriptionservice.UpdateSubscription) error {
 	setValue := make([]string, 0)
 	args := make([]interface{}, 0)
 	argId := 1
@@ -99,14 +99,14 @@ func (r *SubsriptionRepository) UpdateSubscriptionRepository(ctx context.Context
 		argId++
 	}
 	setQuery := strings.Join(setValue, ", ")
-	query := fmt.Sprintf("UPDATE subsription SET %s WHERE id=$%d;", setQuery, argId)
+	query := fmt.Sprintf("UPDATE subscription SET %s WHERE id=$%d;", setQuery, argId)
 	args = append(args, request.Id)
 
 	_, err := r.db.ExecContext(ctx, query, args...)
 	return err
 }
 
-func (r *SubsriptionRepository) TotalPriceRepository(ctx context.Context, filter subscriptionservice.FilterSubscription) (int64, error) {
+func (r *SubscriptionRepository) TotalPriceRepository(ctx context.Context, filter subscriptionservice.FilterSubscription) (int64, error) {
 	var total null.Int
 	reqId := ctx.Value("req_id")
 	if reqId == "" {
@@ -143,7 +143,7 @@ func (r *SubsriptionRepository) TotalPriceRepository(ctx context.Context, filter
 	}
 
 	setQuery := strings.Join(setValue, " AND ")
-	query := fmt.Sprintf("SELECT SUM(price) AS total FROM subsription WHERE %s;", setQuery)
+	query := fmt.Sprintf("SELECT SUM(price) AS total FROM subscription WHERE %s;", setQuery)
 
 	logrus.WithFields(logrus.Fields{
 		"req_id": reqId,

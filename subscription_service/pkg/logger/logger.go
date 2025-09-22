@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"time"
@@ -8,7 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func LoadLogger(level string) error {
+func LoadLogger(level string, filePath string) error {
 
 	switch level {
 	case "DEBUG":
@@ -18,12 +19,12 @@ func LoadLogger(level string) error {
 		})
 		return nil
 
-	case "PRODUCTION":
+	case "INFO":
 		logrus.SetLevel(logrus.InfoLevel)
 		logrus.SetFormatter(&logrus.JSONFormatter{
 			TimestampFormat: time.DateTime,
 		})
-		file, err := os.OpenFile("../logs/subsciption.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+		file, err := os.OpenFile(fmt.Sprintf("logs/%s", filePath), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 		if err == nil {
 			mw := io.MultiWriter(os.Stdout, file)
 			logrus.SetOutput(mw)

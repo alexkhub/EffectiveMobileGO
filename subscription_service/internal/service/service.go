@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type Subsription interface {
+type Subscription interface {
 	CreateSubscriptionService(ctx context.Context, request subscriptionservice.CreateSubscription) (uuid.UUID, error)
 	GetSubscriptionService(ctx context.Context, subId uuid.UUID) (subscriptionservice.Subscription, error)
 	ListSubscriptionService(ctx context.Context) ([]subscriptionservice.Subscription, error)
@@ -18,7 +18,7 @@ type Subsription interface {
 }
 
 type Sevice struct {
-	Subsription
+	Subscription
 }
 
 type ServiceDeps struct {
@@ -27,6 +27,6 @@ type ServiceDeps struct {
 
 func NewService(deps *ServiceDeps) *Sevice {
 	return &Sevice{
-		Subsription: NewSubsriptionService(deps.Repos.Subsription),
+		Subscription: NewSubsriptionService(deps.Repos.Subscription),
 	}
 }

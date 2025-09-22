@@ -40,7 +40,7 @@ info:
 paths:
   /subscription:
     get:
-      description: Возвращает все подписки
+      description: Возвращает список всех подписок
       produces:
       - application/json
       responses:
@@ -62,9 +62,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: Создаёт новую подписку пользователю
+      description: Создает новую подписку
       parameters:
-      - description: Subscription
+      - description: Данные подписки
         in: body
         name: subscription
         required: true
@@ -106,8 +106,8 @@ paths:
       responses:
         "204":
           description: No Content
-        "404":
-          description: Not Found
+        "400":
+          description: Bad Request
           schema:
             additionalProperties:
               type: string
@@ -136,6 +136,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/subscriptionservice.Subscription'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
         "404":
           description: Not Found
           schema:
@@ -154,14 +160,14 @@ paths:
     patch:
       consumes:
       - application/json
-      description: Обновляет существующую подписку по ID
+      description: Обновляет существующую подписку
       parameters:
       - description: Subscription ID
         in: path
         name: id
         required: true
         type: string
-      - description: Данные для обновления
+      - description: Обновленные данные подписки
         in: body
         name: subscription
         required: true
@@ -182,12 +188,6 @@ paths:
             additionalProperties:
               type: string
             type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
         "500":
           description: Internal Server Error
           schema:
@@ -199,13 +199,13 @@ paths:
       - subscriptions
   /subscription/total:
     get:
-      description: Считает сумму всех подписок за период с фильтрами
+      description: Считает суммарную стоимость подписок с фильтрами
       parameters:
-      - description: Начало периода (MM-YYYY)
+      - description: Дата начала (01-2006)
         in: query
         name: date_from
         type: string
-      - description: Конец периода (MM-YYYY)
+      - description: Дата конца (01-2006)
         in: query
         name: date_to
         type: string
@@ -226,13 +226,19 @@ paths:
             additionalProperties:
               type: integer
             type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
         "500":
           description: Internal Server Error
           schema:
             additionalProperties:
               type: string
             type: object
-      summary: Общая сумма подписок
+      summary: Общая стоимость подписок
       tags:
       - subscriptions
 swagger: "2.0"

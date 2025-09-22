@@ -8,7 +8,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type Subsription interface {
+type Subscription interface {
 	CreateSubscriptionRepository(ctx context.Context, request subscriptionservice.CreateSubscription) (uuid.UUID, error)
 	GetSubscriptionRepository(ctx context.Context, subId uuid.UUID) (subscriptionservice.PreparationSubscription, error)
 	ListSubscriptionRepository(ctx context.Context) ([]subscriptionservice.PreparationSubscription, error)
@@ -18,7 +18,7 @@ type Subsription interface {
 }
 
 type Repository struct {
-	Subsription
+	Subscription
 }
 
 type RepositoryDeps struct {
@@ -27,6 +27,6 @@ type RepositoryDeps struct {
 
 func NewRepository(deps *RepositoryDeps) *Repository {
 	return &Repository{
-		Subsription: NewSubsriptionRepository(deps.DB),
+		Subscription: NewSubscriptionRepository(deps.DB),
 	}
 }

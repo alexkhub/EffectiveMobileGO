@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/subscription": {
             "get": {
-                "description": "Возвращает все подписки",
+                "description": "Возвращает список всех подписок",
                 "produces": [
                     "application/json"
                 ],
@@ -47,7 +47,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Создаёт новую подписку пользователю",
+                "description": "Создает новую подписку",
                 "consumes": [
                     "application/json"
                 ],
@@ -60,7 +60,7 @@ const docTemplate = `{
                 "summary": "Создать подписку",
                 "parameters": [
                     {
-                        "description": "Subscription",
+                        "description": "Данные подписки",
                         "name": "subscription",
                         "in": "body",
                         "required": true,
@@ -102,24 +102,24 @@ const docTemplate = `{
         },
         "/subscription/total": {
             "get": {
-                "description": "Считает сумму всех подписок за период с фильтрами",
+                "description": "Считает суммарную стоимость подписок с фильтрами",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "subscriptions"
                 ],
-                "summary": "Общая сумма подписок",
+                "summary": "Общая стоимость подписок",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Начало периода (MM-YYYY)",
+                        "description": "Дата начала (01-2006)",
                         "name": "date_from",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Конец периода (MM-YYYY)",
+                        "description": "Дата конца (01-2006)",
                         "name": "date_to",
                         "in": "query"
                     },
@@ -143,6 +143,15 @@ const docTemplate = `{
                             "type": "object",
                             "additionalProperties": {
                                 "type": "integer"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
                             }
                         }
                     },
@@ -184,6 +193,15 @@ const docTemplate = `{
                             "$ref": "#/definitions/subscriptionservice.Subscription"
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -223,8 +241,8 @@ const docTemplate = `{
                     "204": {
                         "description": "No Content"
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -244,7 +262,7 @@ const docTemplate = `{
                 }
             },
             "patch": {
-                "description": "Обновляет существующую подписку по ID",
+                "description": "Обновляет существующую подписку",
                 "consumes": [
                     "application/json"
                 ],
@@ -264,7 +282,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Данные для обновления",
+                        "description": "Обновленные данные подписки",
                         "name": "subscription",
                         "in": "body",
                         "required": true,
@@ -285,15 +303,6 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -374,6 +383,7 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "API для управления подписками",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
+
 }
 
 func init() {

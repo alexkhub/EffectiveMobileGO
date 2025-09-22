@@ -9,17 +9,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type SubsriptionService struct {
-	repos repository.Subsription
+type SubscriptionService struct {
+	repos repository.Subscription
 }
 
-func NewSubsriptionService(repos repository.Subsription) *SubsriptionService {
-	return &SubsriptionService{
+func NewSubsriptionService(repos repository.Subscription) *SubscriptionService {
+	return &SubscriptionService{
 		repos: repos,
 	}
 }
 
-func (s *SubsriptionService) CreateSubscriptionService(ctx context.Context, request subscriptionservice.CreateSubscription) (uuid.UUID, error) {
+func (s *SubscriptionService) CreateSubscriptionService(ctx context.Context, request subscriptionservice.CreateSubscription) (uuid.UUID, error) {
 	reqId := ctx.Value("req_id")
 	if reqId == "" {
 		reqId = "none"
@@ -33,7 +33,7 @@ func (s *SubsriptionService) CreateSubscriptionService(ctx context.Context, requ
 
 }
 
-func (s *SubsriptionService) GetSubscriptionService(ctx context.Context, subId uuid.UUID) (subscriptionservice.Subscription, error) {
+func (s *SubscriptionService) GetSubscriptionService(ctx context.Context, subId uuid.UUID) (subscriptionservice.Subscription, error) {
 	reqId := ctx.Value("req_id")
 	if reqId == "" {
 		reqId = "none"
@@ -59,7 +59,7 @@ func (s *SubsriptionService) GetSubscriptionService(ctx context.Context, subId u
 
 }
 
-func (s *SubsriptionService) ListSubscriptionService(ctx context.Context) ([]subscriptionservice.Subscription, error) {
+func (s *SubscriptionService) ListSubscriptionService(ctx context.Context) ([]subscriptionservice.Subscription, error) {
 
 	reqId := ctx.Value("req_id")
 	if reqId == "" {
@@ -90,20 +90,20 @@ func (s *SubsriptionService) ListSubscriptionService(ctx context.Context) ([]sub
 	return response, nil
 }
 
-func (s *SubsriptionService) DeleteSubscriptionService(ctx context.Context, subId uuid.UUID) error {
+func (s *SubscriptionService) DeleteSubscriptionService(ctx context.Context, subId uuid.UUID) error {
 	reqId := ctx.Value("req_id")
 	if reqId == "" {
 		reqId = "none"
 	}
 	logrus.WithFields(logrus.Fields{
 		"req_id": reqId,
-		"method": "GetSubscriptionService",
+		"method": "DeleteSubscriptionService",
 	}).Debug()
 	return s.repos.DeleteSubscriptionRepository(ctx, subId)
 
 }
 
-func (s *SubsriptionService) UpdateSubscriptionService(ctx context.Context, request subscriptionservice.UpdateSubscription) error {
+func (s *SubscriptionService) UpdateSubscriptionService(ctx context.Context, request subscriptionservice.UpdateSubscription) error {
 	reqId := ctx.Value("req_id")
 	if reqId == "" {
 		reqId = "none"
@@ -116,8 +116,8 @@ func (s *SubsriptionService) UpdateSubscriptionService(ctx context.Context, requ
 	return s.repos.UpdateSubscriptionRepository(ctx, request)
 }
 
-func (s *SubsriptionService) TotalPriceService(ctx context.Context, filter subscriptionservice.FilterSubscription) (int64, error) {
-	reqId := ctx.Value("req_id")
+func (s *SubscriptionService) TotalPriceService(ctx context.Context, filter subscriptionservice.FilterSubscription) (int64, error) {
+	reqId := ctx.Value("req_id").(string)
 	if reqId == "" {
 		reqId = "none"
 	}

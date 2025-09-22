@@ -24,12 +24,12 @@ func NewApp(config *config.Config) (*App, error) {
 	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s  dbname=%s sslmode=%s", config.Postgres.Host, config.Postgres.Port, config.Postgres.User, config.Postgres.Password, config.Postgres.Dbname, config.Postgres.Sslmode)
 	db, err := db.NewDBConnect(dsn)
 	if err != nil {
-		logrus.Fatal(err)
+		return &App{}, err
 	}
 	logrus.Info("db start")
 	err = migration.RunMigrations(db, "migrations")
 	if err != nil {
-		logrus.Fatal(err)
+		return &App{}, err
 	}
 
 	repos := repository.NewRepository(&repository.RepositoryDeps{DB: db})

@@ -8,9 +8,10 @@ import (
 )
 
 type Config struct {
-	Postgres   PostgresCFG `mapstructure:"postgres"`
-	Host       int         `mapstructure:"app_host"`
-	DebugLevel string      `mapstructure:"debug_level"`
+	Postgres PostgresCFG `mapstructure:"postgres"`
+	Port     int         `mapstructure:"server_port"`
+	LogLevel string      `mapstructure:"log_level"`
+	LogFile  string      `mapstructure:"log_file"`
 }
 
 type PostgresCFG struct {
